@@ -4,3 +4,5 @@ This is the PHP Class of ios_pay_check
 Hello this my first use git!
 
 THIS IS USED FOR TEST!
+
+today i also add one line in here for test!
