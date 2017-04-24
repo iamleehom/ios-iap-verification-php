@@ -13,7 +13,7 @@ use AppleIAP\AppleInAppPurchaseVerification;
 
 //the receipt-data from apple
 $receiptData = 'MIXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
-//the password you own,if your IAP is not a subscription,let it empty string(like this:''),else use you own password
+//the password your own,if your IAP is not a subscription,let it empty string(like this:''),else use your own password
 $password = 'baXXXXXXXXXXXXXXXXXXXXXXXXX';
 
 $appleIAP = new AppleInAppPurchaseVerification($receiptData, $password, true);
