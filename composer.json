@@ -1,19 +1,25 @@
 {
-  "name": "leehom1988/ios-iap-verification-php",
+  "name"       : "leehom1988/ios-iap-verification-php",
   "description": "This PHP Class is help you to verification your Apple IAP receipt-data if your server is developed by PHP.",
-  "keywords": ["apple-iap-verification","ios-iap-php","apple-iap-php"],
-  "homepage": "https://github.com/leehom1988/ios-iap-verification-php",
-  "license": "MIT",
-  "authors": [
+  "keywords"   : [
+    "apple-iap-verification",
+    "ios-iap-php",
+    "apple-iap-php"
+  ],
+  "homepage"   : "https://github.com/leehom1988/ios-iap-verification-php",
+  "license"    : "MIT",
+  "authors"    : [
     {
-      "name": "LeeHom",
+      "name" : "LeeHom",
       "email": "lh411937409@gmail.com"
     }
   ],
-  "require": {
-    "php": "^5.6.25 || ^7.0"
+  "require"    : {
+    "leehom1988/ios-iap-verification-php": "^1.0"
   },
-  "autoload": {
-    "psr-4": { "AppleIAP\\": "src" }
+  "autoload"   : {
+    "psr-4": {
+      "AppleIAP\\": "src"
+    }
   }
 }
