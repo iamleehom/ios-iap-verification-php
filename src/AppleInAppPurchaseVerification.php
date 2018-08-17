@@ -2,15 +2,18 @@
 /**
  * Created By: LeeHom
  * File Name: AppleInAppPurchaseVerification.php
- * Created Date: 2018-08-17 10:20
+ * Created Date: 2018-08-17 17:20
  */
 
 namespace LeeHom;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+
 class AppleInAppPurchaseVerification
 {
     // App Version
-    const APP_VERSION = '1.0.0';
+    const APP_VERSION = '1.0.1';
 
     // SandBox Verify URL
     const SANDBOX_URL = 'https://sandbox.itunes.apple.com/verifyReceipt';
@@ -35,7 +38,7 @@ class AppleInAppPurchaseVerification
      *
      * @param string  $receiptData
      * @param string  $password
-     * @param boolean $sandbox
+     * @param boolean $sandbox true:Production false:Sandbox
      */
     public function __construct($receiptData, $password, $sandbox)
     {
@@ -52,14 +55,14 @@ class AppleInAppPurchaseVerification
     /**
      * encode request param
      *
-     * @return string
+     * @return array
      */
     private function encodeRequest()
     {
         if ($this->password == '') {
-            return json_encode(['receipt-data' => $this->receiptData]);
+            return ['receipt-data' => $this->receiptData];
         } else {
-            return json_encode(['receipt-data' => $this->receiptData, 'password' => $this->password]);
+            return ['receipt-data' => $this->receiptData, 'password' => $this->password];
         }
     }
 
@@ -77,33 +80,28 @@ class AppleInAppPurchaseVerification
     /**
      * initiate validation request
      *
-     * @return mixed
-     * @throws \Exception
+     * @return mixed|\Psr\Http\Message\ResponseInterface|string
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     private function makeRequest()
     {
-        $ch = curl_init($this->requestUrl);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $this->encodeRequest());
-        $response = curl_exec($ch);
-        $errNo    = curl_errno($ch);
-        $errMsg   = curl_error($ch);
-        curl_close($ch);
-        if ($errNo != 0) {
-            throw new \Exception($errMsg, $errNo);
-        }
+        $httpRequest = new Client();
+        try {
+            $response = $httpRequest->request('POST', $this->requestUrl, [
+                'json' => $this->encodeRequest()
+            ]);
 
-        return $response;
+            return $response->getBody()->getContents();
+        } catch (ClientException $e) {
+            return $e->getMessage();
+        }
     }
 
     /**
      * verify the apple validation results
      *
-     * @return mixed
-     * @throws \Exception
+     * @return mixed|\Psr\Http\Message\ResponseInterface|string
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function validateReceipt()
     {

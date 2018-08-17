@@ -6,14 +6,25 @@
 
 This PHP Class is help you to verification your Apple IAP receipt-data if your server is developed by PHP.
 
+## Installation
+
+It's recommended that you use [Composer](https://getcomposer.org/) to install this library.
+
+```bash
+$ composer require leehom1988/ios-iap-verification-php
+```
+
+This will install this library and all required dependencies. This library requires PHP 5.6.0 or newer.
+
 ## Usage(English)
 
 Create an Demo.php file with the following contents:
 
 ```php
 <?php
-require_once 'src/AppleIAP/AppleInAppPurchaseVerification.php';
-use AppleIAP\AppleInAppPurchaseVerification;
+require_once 'vendor/autoload.php';
+
+use LeeHom\AppleInAppPurchaseVerification;
 
 //the receipt-data from apple
 $receiptData = 'MIXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
@@ -31,8 +42,9 @@ echo $result;
 
 ```php
 <?php
-require_once 'src/AppleIAP/AppleInAppPurchaseVerification.php';
-use AppleIAP\AppleInAppPurchaseVerification;
+require_once 'vendor/autoload.php';
+
+use LeeHom\AppleInAppPurchaseVerification;
 
 //apple返回的支付参数 receipt-data
 $receiptData = 'MIXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
