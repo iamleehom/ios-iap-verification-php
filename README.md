@@ -6,7 +6,7 @@
 
 This PHP Class is help you to verification your Apple IAP receipt-data if your server is developed by PHP.
 
-####I have fix the composer bug in version 1.0.3, hope you enjoy it!
+I have fix the composer bug in version 1.0.3, hope you enjoy it!
 ## Usage(English)
 
 Create an Demo.php file with the following contents:

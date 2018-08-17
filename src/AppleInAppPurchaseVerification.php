@@ -3,7 +3,7 @@
  * Created By: LeeHom
  * File Name: AppleInAppPurchaseVerification.php
  * Created Date: 2018-08-17 10:20
- * Version: 1.0.3
+ * Version: 1.0.4
  */
 
 namespace LeeHom;
