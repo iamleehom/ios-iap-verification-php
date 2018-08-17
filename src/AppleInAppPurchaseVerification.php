@@ -3,40 +3,46 @@
  * Created By: LeeHom
  * File Name: AppleInAppPurchaseVerification.php
  * Created Date: 2018-08-17 10:20
- * Version: 1.0.5
  */
 
 namespace LeeHom;
 
 class AppleInAppPurchaseVerification
 {
-    //SandBox Verify URL
+    // App Version
+    const APP_VERSION = '1.0.0';
+
+    // SandBox Verify URL
     const SANDBOX_URL = 'https://sandbox.itunes.apple.com/verifyReceipt';
-    //Production Verify URL
+
+    // Production Verify URL
     const PRODUCTION_URL = 'https://buy.itunes.apple.com/verifyReceipt';
 
-    //the apple Returned the receipt-data
+    // the apple Returned the receipt-data
     private $receiptData;
-    //if your IAP is not a subscription,let it empty string(like this:''),else use you own password
+
+    // if your IAP is not a subscription,let it empty string(like this:''),else use you own password
     private $password = '';
-    //use SandBox for verify or not, true:sandbox false:production
+
+    // use SandBox for verify or not, true:sandbox false:production
     private $sandbox = true;
-    //Verify URL,No need to care
+
+    // Verify URL,No need to care
     private $requestUrl;
 
     /**
      * AppleInAppPurchaseVerification constructor.
      *
-     * @param $receiptData
-     * @param $password
-     * @param $sandbox
+     * @param string  $receiptData
+     * @param string  $password
+     * @param boolean $sandbox
      */
     public function __construct($receiptData, $password, $sandbox)
     {
         $this->receiptData = $receiptData;
         $this->password    = $password;
         $this->sandbox     = $sandbox;
-        if ($this->sandbox == true) {
+        if ($this->sandbox === true) {
             $this->requestUrl = $this::SANDBOX_URL;
         } else {
             $this->requestUrl = $this::PRODUCTION_URL;
@@ -60,7 +66,7 @@ class AppleInAppPurchaseVerification
     /**
      * decode response
      *
-     * @param $response
+     * @param string $response
      * @return mixed
      */
     private function decodeResponse($response)

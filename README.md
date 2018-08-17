@@ -1,4 +1,4 @@
-# Apple In App Purchase Verification Use PHP
+# Apple In App Purchase Verification With PHP
 [![Latest Stable Version](https://poser.pugx.org/leehom1988/ios-iap-verification-php/version)](https://packagist.org/packages/leehom1988/ios-iap-verification-php)
 [![Total Downloads](https://poser.pugx.org/leehom1988/ios-iap-verification-php/downloads)](https://packagist.org/packages/leehom1988/ios-iap-verification-php)
 [![Latest Unstable Version](https://poser.pugx.org/leehom1988/ios-iap-verification-php/v/unstable)](//packagist.org/packages/leehom1988/ios-iap-verification-php)
@@ -6,7 +6,6 @@
 
 This PHP Class is help you to verification your Apple IAP receipt-data if your server is developed by PHP.
 
-I have fix the composer bug in version 1.0.5, hope you enjoy it!
 ## Usage(English)
 
 Create an Demo.php file with the following contents:
