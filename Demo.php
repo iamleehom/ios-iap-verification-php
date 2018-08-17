@@ -2,10 +2,11 @@
 /**
  * Created By: LeeHom
  * File Name: Demo.php
- * Created Date: 2017-03-10 14:55
+ * Created Date: 2018-08-17 10:55
  */
-require_once 'src/AppleIAP/AppleInAppPurchaseVerification.php';
-use AppleIAP\AppleInAppPurchaseVerification;
+require_once 'src/AppleInAppPurchaseVerification.php';
+
+use LeeHom\AppleInAppPurchaseVerification;
 
 //the receipt-data from apple
 $receiptData = 'MIXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
@@ -13,5 +14,9 @@ $receiptData = 'MIXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
 $password = 'baXXXXXXXXXXXXXXXXXXXXXXXXX';
 
 $appleIAP = new AppleInAppPurchaseVerification($receiptData, $password, true);
-$result = $appleIAP->validateReceipt();
-echo $result;
+try {
+    $result = $appleIAP->validateReceipt();
+    echo $result;
+} catch (Exception $e) {
+    echo $e->getMessage();
+}
