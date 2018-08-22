@@ -2,7 +2,7 @@
 [![Latest Stable Version](https://poser.pugx.org/leehom1988/ios-iap-verification-php/version)](https://packagist.org/packages/leehom1988/ios-iap-verification-php)
 [![Total Downloads](https://poser.pugx.org/leehom1988/ios-iap-verification-php/downloads)](https://packagist.org/packages/leehom1988/ios-iap-verification-php)
 [![Latest Unstable Version](https://poser.pugx.org/leehom1988/ios-iap-verification-php/v/unstable)](//packagist.org/packages/leehom1988/ios-iap-verification-php)
-[![License](https://poser.pugx.org/leehom1988/ios-iap-verification-php/license)](https://packagist.org/packages/leehom1988/ios-iap-verification-php)
+[![License](https://poser.pugx.org/leehom1988/ios-iap-verification-php/license)](https://packagist.org/packages/leehom1988/ios-iap-verification-php) [![Join the chat at https://gitter.im/ios-iap-verification/Lobby](https://badges.gitter.im/ios-iap-verification/Lobby.svg)](https://gitter.im/ios-iap-verification/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 This PHP Class is help you to verification your Apple IAP receipt-data if your server is developed by PHP.
 
