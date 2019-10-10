@@ -26,9 +26,9 @@ require_once 'vendor/autoload.php';
 
 use LeeHom\AppleInAppPurchaseVerification;
 
-//the receipt-data from apple
+// The receipt-data from apple
 $receiptData = 'MIXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
-//the password your own,if your IAP is not a subscription,let it empty string(like this:''),else use your own password
+// The password your own, if your IAP is not a subscription, let it empty string(like this:''), else use your own password
 $password = 'baXXXXXXXXXXXXXXXXXXXXXXXXX';
 
 $appleIAP = new AppleInAppPurchaseVerification($receiptData, $password, true);
@@ -38,7 +38,7 @@ echo $result;
 
 ## Usage(中文)
 
-创建一个名为Demo.php的文件,将以下内容拷贝至Demo.php文件中:
+创建一个名为Demo.php的文件，将以下内容拷贝至Demo.php文件中:
 
 ```php
 <?php
@@ -46,9 +46,9 @@ require_once 'vendor/autoload.php';
 
 use LeeHom\AppleInAppPurchaseVerification;
 
-//apple返回的支付参数 receipt-data
+// apple返回的支付参数 receipt-data
 $receiptData = 'MIXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
-//如果产品类型为订阅型的，请使用校验需要的密码；如果不是订阅型的产品，请将其置为空字符串
+// 如果产品类型为订阅型的，请使用校验需要的密码；如果不是订阅型的产品，请将其置为空字符串
 $password = 'baXXXXXXXXXXXXXXXXXXXXXXXXX';
 
 $appleIAP = new AppleInAppPurchaseVerification($receiptData, $password, true);
@@ -57,7 +57,7 @@ echo $result;
 ```
 
 ## View results:
-- Use PHP CLI,in the terminal windows,type the following contents:
+- Use PHP CLI, in the terminal windows, type the following contents:
 ```bash
 $ php Demo.php start
 ```
@@ -87,10 +87,13 @@ For Status codes more information, see [Apple Receipt Validation Programming Gui
 
 ## Author:
 If you have any question,Please be easy to contact me:
-- Name: LeeHom
+- Name: [LeeHom](https://diandian.iamleehom.com/)
 - Email: lh411937409@gmail.com
+- [Website](https://diandian.iamleehom.com/)
 
-Hope it can help You,Just Enjoy It! 😁😁😁😁
+Hope it can help You, Just Enjoy It! 😁😁😁😁
+- (If you like it, Star it!️⭐⭐️)
+- (喜欢就给个星星吧!⭐️⭐)
 
 ## License
 

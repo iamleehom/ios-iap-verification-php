@@ -3,17 +3,20 @@
  * Created By: LeeHom
  * File Name: AppleInAppPurchaseVerification.php
  * Created Date: 2018-08-17 17:20
+ * Updated Date: 2019-10-10 15:45
  */
 
 namespace LeeHom;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\GuzzleException;
+use Psr\Http\Message\ResponseInterface;
 
 class AppleInAppPurchaseVerification
 {
     // App Version
-    const APP_VERSION = '1.0.1';
+    const APP_VERSION = '1.0.2';
 
     // SandBox Verify URL
     const SANDBOX_URL = 'https://sandbox.itunes.apple.com/verifyReceipt';
@@ -24,13 +27,13 @@ class AppleInAppPurchaseVerification
     // the apple Returned the receipt-data
     private $receiptData;
 
-    // if your IAP is not a subscription,let it empty string(like this:''),else use you own password
+    // if your IAP is not a subscription, let it empty string(like this: ''), else use you own password
     private $password = '';
 
-    // use SandBox for verify or not, true:sandbox false:production
+    // use SandBox for verify or not, true: sandbox false: production
     private $sandbox = true;
 
-    // Verify URL,No need to care
+    // Verify URL, No need to care
     private $requestUrl;
 
     /**
@@ -38,7 +41,7 @@ class AppleInAppPurchaseVerification
      *
      * @param string  $receiptData
      * @param string  $password
-     * @param boolean $sandbox true:Production false:Sandbox
+     * @param boolean $sandbox true: Production false: Sandbox
      */
     public function __construct($receiptData, $password, $sandbox)
     {
@@ -80,8 +83,8 @@ class AppleInAppPurchaseVerification
     /**
      * initiate validation request
      *
-     * @return mixed|\Psr\Http\Message\ResponseInterface|string
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed|ResponseInterface|string
+     * @throws GuzzleException
      */
     private function makeRequest()
     {
@@ -100,8 +103,8 @@ class AppleInAppPurchaseVerification
     /**
      * verify the apple validation results
      *
-     * @return mixed|\Psr\Http\Message\ResponseInterface|string
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed|ResponseInterface|string
+     * @throws GuzzleException
      */
     public function validateReceipt()
     {
