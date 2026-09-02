@@ -1,123 +1,145 @@
 <?php
+declare(strict_types=1);
+
 /**
+ * Apple IAP verification helper
+ * Upgraded for v2.0.0: PHP 8.0+ compatibility, Guzzle 7 support,
+ * better error handling and sandbox retry per Apple's spec (status 21007).
+ *
  * Created By: LeeHom
- * File Name: AppleInAppPurchaseVerification.php
- * Created Date: 2018-08-17 17:20
- * Updated Date: 2019-10-10 15:45
+ * Updated Date: 2026-09-02
  */
 
 namespace LeeHom;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
-use Psr\Http\Message\ResponseInterface;
 
 class AppleInAppPurchaseVerification
 {
     // App Version
-    const APP_VERSION = '1.0.2';
+    public const APP_VERSION = '2.0.0';
 
     // SandBox Verify URL
-    const SANDBOX_URL = 'https://sandbox.itunes.apple.com/verifyReceipt';
+    public const SANDBOX_URL = 'https://sandbox.itunes.apple.com/verifyReceipt';
 
     // Production Verify URL
-    const PRODUCTION_URL = 'https://buy.itunes.apple.com/verifyReceipt';
+    public const PRODUCTION_URL = 'https://buy.itunes.apple.com/verifyReceipt';
 
     // the apple Returned the receipt-data
-    private $receiptData;
+    private string $receiptData;
 
-    // if your IAP is not a subscription, let it empty string(like this: ''), else use you own password
-    private $password = '';
+    // if your IAP is not a subscription, let it empty string, else use your shared secret
+    private string $password = '';
 
-    // use SandBox for verify or not, true: sandbox false: production
-    private $sandbox = true;
+    // optional: force sandbox (true) or production (false). null = follow retry logic (default)
+    private ?bool $sandbox;
 
-    // Verify URL, No need to care
-    private $requestUrl;
+    // Verify URL
+    private string $requestUrl;
 
     /**
-     * AppleInAppPurchaseVerification constructor.
+     * Constructor
      *
-     * @param string  $receiptData
-     * @param string  $password
-     * @param boolean $sandbox true: Production false: Sandbox
+     * @param string $receiptData base64 encoded receipt-data from device
+     * @param string $password    shared secret for auto-renewable subscriptions (optional)
+     * @param bool|null $sandbox  true = sandbox, false = production, null = auto (production then sandbox if needed)
      */
-    public function __construct($receiptData, $password, $sandbox)
+    public function __construct(string $receiptData, string $password = '', ?bool $sandbox = null)
     {
         $this->receiptData = $receiptData;
-        $this->password    = $password;
-        $this->sandbox     = $sandbox;
+        $this->password = $password;
+        $this->sandbox = $sandbox;
+        $this->requestUrl = $this->resolveInitialUrl();
+    }
+
+    private function resolveInitialUrl(): string
+    {
         if ($this->sandbox === true) {
-            $this->requestUrl = $this::SANDBOX_URL;
-        } else {
-            $this->requestUrl = $this::PRODUCTION_URL;
+            return self::SANDBOX_URL;
         }
+
+        // default to production when sandbox is false or null (we may retry sandbox later on 21007)
+        return self::PRODUCTION_URL;
     }
 
     /**
-     * encode request param
-     *
-     * @return array
+     * Prepare request payload
      */
-    private function encodeRequest()
+    private function encodeRequest(): array
     {
-        if ($this->password == '') {
-            return ['receipt-data' => $this->receiptData];
-        } else {
-            return ['receipt-data' => $this->receiptData, 'password' => $this->password];
+        $payload = ['receipt-data' => $this->receiptData];
+
+        if ($this->password !== '') {
+            $payload['password'] = $this->password;
         }
+
+        // recommended to include exclude-old-transactions for some server flows; leave optional for now
+        return $payload;
     }
 
     /**
-     * decode response
+     * Low level HTTP request to Apple's verifyReceipt endpoint
      *
-     * @param string $response
-     * @return mixed
-     */
-    private function decodeResponse($response)
-    {
-        return json_decode($response);
-    }
-
-    /**
-     * initiate validation request
-     *
-     * @return mixed|ResponseInterface|string
      * @throws GuzzleException
      */
-    private function makeRequest()
+    private function makeRequest(string $url): string
     {
-        $httpRequest = new Client();
+        $client = new Client(['timeout' => 10.0]);
+
+        $response = $client->request('POST', $url, [
+            'json' => $this->encodeRequest(),
+            'headers' => [
+                'User-Agent' => 'ios-iap-verification-php/' . self::APP_VERSION,
+                'Accept' => 'application/json',
+            ],
+        ]);
+
+        return (string)$response->getBody();
+    }
+
+    /**
+     * Validate receipt against Apple's servers.
+     *
+     * Behavior changes in v2.0.0:
+     * - Requires PHP 8.0+
+     * - Returns decoded response as associative array on success
+     * - If production is used and Apple returns status 21007 (sandbox receipt sent to production),
+     *   this automatically retries against the sandbox endpoint.
+     * - Throws RuntimeException on network / JSON errors for clearer error handling.
+     *
+     * @return array Decoded Apple response (associative)
+     * @throws \RuntimeException on error
+     */
+    public function validateReceipt(): array
+    {
         try {
-            $response = $httpRequest->request('POST', $this->requestUrl, [
-                'json' => $this->encodeRequest()
-            ]);
-
-            return $response->getBody()->getContents();
-        } catch (ClientException $e) {
-            return $e->getMessage();
-        }
-    }
-
-    /**
-     * verify the apple validation results
-     *
-     * @return mixed|ResponseInterface|string
-     * @throws GuzzleException
-     */
-    public function validateReceipt()
-    {
-        $response        = $this->makeRequest();
-        $decodedResponse = $this->decodeResponse($response);
-        if (!isset($decodedResponse->status) || $decodedResponse->status != 0) {
-            $responseResult = 'Invalid receipt. Status code: ' . (!empty($decodedResponse->status) ? $decodedResponse->status : 'N/A');
-        } elseif (!is_object($decodedResponse)) {
-            $responseResult = 'Invalid response data';
-        } else {
-            $responseResult = $response;
+            $body = $this->makeRequest($this->requestUrl);
+        } catch (GuzzleException $e) {
+            throw new \RuntimeException('HTTP request to Apple failed: ' . $e->getMessage(), 0, $e);
         }
 
-        return $responseResult;
+        $decoded = json_decode($body, true);
+        if (!is_array($decoded)) {
+            throw new \RuntimeException('Invalid JSON response from Apple');
+        }
+
+        // If Apple returns 21007 (this receipt is from the test environment but sent to production), retry sandbox
+        if (isset($decoded['status']) && (int)$decoded['status'] === 21007 && $this->requestUrl === self::PRODUCTION_URL) {
+            try {
+                $body = $this->makeRequest(self::SANDBOX_URL);
+            } catch (GuzzleException $e) {
+                throw new \RuntimeException('HTTP request to Apple (sandbox retry) failed: ' . $e->getMessage(), 0, $e);
+            }
+
+            $decodedRetry = json_decode($body, true);
+            if (!is_array($decodedRetry)) {
+                throw new \RuntimeException('Invalid JSON response from Apple (sandbox retry)');
+            }
+
+            return $decodedRetry;
+        }
+
+        return $decoded;
     }
 }
